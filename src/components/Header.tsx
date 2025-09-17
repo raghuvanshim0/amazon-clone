@@ -7,13 +7,6 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import { useCart } from '@/hooks/use-cart'
 import CartDrawer from './CartDrawer'
 
-interface CartItem {
-  id: string
-  title: string
-  price: number
-  quantity: number
-}
-
 interface UserPreferences {
   location: string
   language: string
@@ -23,8 +16,9 @@ interface UserPreferences {
 }
 
 const Header = () => {
+  const [isCartOpen, setIsCartOpen] = useState(false)
   const isMobile = useIsMobile()
-  const [cart] = useKV<CartItem[]>("cart", [])
+  const { getCartItemCount } = useCart()
   const [userPrefs] = useKV<UserPreferences>("user-preferences", { 
     location: "Bengaluru 562130", 
     language: "EN",
@@ -33,7 +27,7 @@ const Header = () => {
     favoriteCategories: []
   })
 
-  const cartItemCount = cart?.length || 0
+  const cartItemCount = getCartItemCount()
 
   if (isMobile) {
     return (
@@ -52,12 +46,14 @@ const Header = () => {
             </div>
 
             {/* Cart */}
-            <div className="flex items-center gap-1">
-              <div className="relative">
+            <div className="flex items-center gap-1" onClick={() => setIsCartOpen(true)}>
+              <div className="relative cursor-pointer">
                 <ShoppingCart size={20} />
-                <span className="absolute -top-1 -right-1 bg-amazon-orange text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold text-[10px]">
-                  {cartItemCount}
-                </span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-amazon-orange text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold text-[10px]">
+                    {cartItemCount}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -81,6 +77,7 @@ const Header = () => {
             <span className="text-gray-300">Deliver to {userPrefs?.location || "Bengaluru 562130"}</span>
           </div>
         </div>
+        <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       </header>
     )
   }
@@ -155,18 +152,22 @@ const Header = () => {
             </div>
 
             {/* Cart */}
-            <div className="flex items-center gap-1 px-2 py-1 hover:border border-white/20 rounded cursor-pointer">
+            <div className="flex items-center gap-1 px-2 py-1 hover:border border-white/20 rounded cursor-pointer" onClick={() => setIsCartOpen(true)}>
               <div className="relative">
                 <ShoppingCart size={24} />
-                <span className="absolute -top-1 -right-1 bg-amazon-orange text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                  {cartItemCount}
-                </span>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-amazon-orange text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {cartItemCount}
+                  </span>
+                )}
               </div>
               <span className="text-sm font-medium">Cart</span>
             </div>
           </div>
         </div>
       </div>
+      
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   )
 }

@@ -1,5 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { ShoppingCart, Plus } from '@phosphor-icons/react'
 import { useKV } from '@github/spark/hooks'
+import { useCart } from '@/hooks/use-cart'
 
 interface Product {
   id: string
@@ -20,32 +23,110 @@ interface Deal {
 }
 
 const ProductGrid = () => {
-  const [featuredProducts] = useKV<Product[]>("featured-products", [])
-  const [dealsOfTheDay] = useKV<Deal[]>("deals-of-the-day", [])
+  const [featuredProducts, setFeaturedProducts] = useKV<Product[]>("featured-products", [])
+  const [dealsOfTheDay, setDealsOfTheDay] = useKV<Deal[]>("deals-of-the-day", [])
+  const { addToCart, isInCart } = useCart()
+
+  // Initialize sample data if empty
+  if ((!featuredProducts || featuredProducts.length === 0)) {
+    const sampleProducts: Product[] = [
+      {
+        id: "sample-1",
+        title: "Samsung Galaxy M14 5G",
+        price: 13990,
+        originalPrice: 16990,
+        image: "📱",
+        rating: 4.2,
+        category: "Electronics"
+      },
+      {
+        id: "sample-2", 
+        title: "Sony WH-CH720N Headphones",
+        price: 8990,
+        originalPrice: 12990,
+        image: "🎧",
+        rating: 4.5,
+        category: "Electronics"
+      },
+      {
+        id: "sample-3",
+        title: "Philips Air Fryer HD9252/90",
+        price: 7995,
+        originalPrice: 12995,
+        image: "🍳",
+        rating: 4.3,
+        category: "Appliances"
+      }
+    ]
+    setFeaturedProducts(sampleProducts)
+  }
+
+  if ((!dealsOfTheDay || dealsOfTheDay.length === 0)) {
+    const sampleDeals: Deal[] = [
+      {
+        id: "deal-1",
+        title: "Electronics Sale",
+        discount: "Up to 60%",
+        validUntil: "Today Only",
+        category: "Electronics"
+      },
+      {
+        id: "deal-2",
+        title: "Fashion Mega Sale", 
+        discount: "40-80%",
+        validUntil: "Limited Time",
+        category: "Fashion"
+      },
+      {
+        id: "deal-3",
+        title: "Home & Kitchen",
+        discount: "50%",
+        validUntil: "This Weekend",
+        category: "Home"
+      }
+    ]
+    setDealsOfTheDay(sampleDeals)
+  }
 
   const categories = [
     {
       title: "Revamp your home in style",
       items: [
         {
+          id: "cushions-1",
           title: "Cushion covers, bedsheets & more",
           image: "🛏️",
-          description: "Cushion covers, bedsheets & more"
+          description: "Cushion covers, bedsheets & more",
+          price: 599,
+          originalPrice: 899,
+          category: "Home & Kitchen"
         },
         {
+          id: "figurines-1",
           title: "Figurines, vases & more",
           image: "🏺",
-          description: "Figurines, vases & more"
+          description: "Figurines, vases & more",
+          price: 1299,
+          originalPrice: 1899,
+          category: "Home & Kitchen"
         },
         {
+          id: "storage-1",
           title: "Home storage",
           image: "📦",
-          description: "Home storage"
+          description: "Home storage",
+          price: 799,
+          originalPrice: 1199,
+          category: "Home & Kitchen"
         },
         {
+          id: "lighting-1",
           title: "Lighting solutions",
           image: "💡",
-          description: "Lighting solutions"
+          description: "Lighting solutions",
+          price: 1599,
+          originalPrice: 2299,
+          category: "Home & Kitchen"
         }
       ]
     },
@@ -53,24 +134,40 @@ const ProductGrid = () => {
       title: "Appliances for your home | Up to 55% off",
       items: [
         {
+          id: "ac-1",
           title: "Air conditioners",
           image: "❄️",
-          description: "Air conditioners"
+          description: "Air conditioners",
+          price: 25999,
+          originalPrice: 45999,
+          category: "Appliances"
         },
         {
+          id: "fridge-1",
           title: "Refrigerators",
           image: "🧊",
-          description: "Refrigerators"
+          description: "Refrigerators",
+          price: 18999,
+          originalPrice: 28999,
+          category: "Appliances"
         },
         {
+          id: "microwave-1",
           title: "Microwaves",
           image: "📱",
-          description: "Microwaves"
+          description: "Microwaves",
+          price: 7999,
+          originalPrice: 12999,
+          category: "Appliances"
         },
         {
+          id: "washing-1",
           title: "Washing machines",
           image: "🔄",
-          description: "Washing machines"
+          description: "Washing machines",
+          price: 15999,
+          originalPrice: 22999,
+          category: "Appliances"
         }
       ]
     },
@@ -78,27 +175,43 @@ const ProductGrid = () => {
       title: "Starting ₹149 | Headphones",
       items: [
         {
-          title: "Starting ₹249 | boAt",
+          id: "boat-1",
+          title: "boAt Headphones",
           image: "🎧",
           description: "Starting ₹249 | boAt",
+          price: 249,
+          originalPrice: 499,
+          category: "Electronics",
           brand: "boAt"
         },
         {
-          title: "Starting ₹349 | boult",
+          id: "boult-1",
+          title: "BOULT Headphones",
           image: "🎵",
           description: "Starting ₹349 | boult",
+          price: 349,
+          originalPrice: 699,
+          category: "Electronics",
           brand: "BOULT"
         },
         {
-          title: "Starting ₹749 | Noise",
+          id: "noise-1",
+          title: "Noise Headphones",
           image: "🔊",
           description: "Starting ₹749 | Noise",
+          price: 749,
+          originalPrice: 1299,
+          category: "Electronics",
           brand: "NOISE"
         },
         {
-          title: "Starting ₹849 | Zebronics",
+          id: "zebronics-1",
+          title: "Zebronics Headphones",
           image: "🎤",
           description: "Starting ₹849 | Zebronics",
+          price: 849,
+          originalPrice: 1499,
+          category: "Electronics",
           brand: "ZEBRONICS"
         }
       ]
@@ -107,24 +220,40 @@ const ProductGrid = () => {
       title: "Under ₹499 | Deals on home improvement essentials",
       items: [
         {
-          title: "Under ₹199 | Cleaning supplies",
+          id: "cleaning-1",
+          title: "Cleaning supplies",
           image: "🧽",
-          description: "Under ₹199 | Cleaning supplies"
+          description: "Under ₹199 | Cleaning supplies",
+          price: 199,
+          originalPrice: 299,
+          category: "Home Improvement"
         },
         {
-          title: "Under ₹399 | Bathroom accessories",
+          id: "bathroom-1",
+          title: "Bathroom accessories",
           image: "🚿",
-          description: "Under ₹399 | Bathroom accessories"
+          description: "Under ₹399 | Bathroom accessories",
+          price: 399,
+          originalPrice: 599,
+          category: "Home Improvement"
         },
         {
+          id: "tools-1",
           title: "Hardware & tools",
           image: "🔧",
-          description: "Hardware & tools"
+          description: "Hardware & tools",
+          price: 299,
+          originalPrice: 499,
+          category: "Home Improvement"
         },
         {
+          id: "garden-1",
           title: "Garden & outdoor",
           image: "🌱",
-          description: "Garden & outdoor"
+          description: "Garden & outdoor",
+          price: 399,
+          originalPrice: 699,
+          category: "Home Improvement"
         }
       ]
     }
@@ -151,6 +280,42 @@ const ProductGrid = () => {
                       <div className="text-xs text-amazon-dark-gray leading-tight">
                         {item.description}
                       </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs">
+                          <span className="font-bold text-amazon-orange">₹{item.price}</span>
+                          {item.originalPrice && (
+                            <span className="text-gray-500 line-through ml-1">₹{item.originalPrice}</span>
+                          )}
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        className={`w-full text-xs h-7 ${
+                          isInCart(item.id)
+                            ? 'bg-green-600 hover:bg-green-700'
+                            : 'bg-amazon-orange hover:bg-amazon-orange/90'
+                        }`}
+                        onClick={() => addToCart({
+                          id: item.id,
+                          title: item.title,
+                          price: item.price,
+                          originalPrice: item.originalPrice,
+                          image: item.image,
+                          category: item.category
+                        })}
+                      >
+                        {isInCart(item.id) ? (
+                          <>
+                            <ShoppingCart size={12} className="mr-1" />
+                            In Cart
+                          </>
+                        ) : (
+                          <>
+                            <Plus size={12} className="mr-1" />
+                            Add to Cart
+                          </>
+                        )}
+                      </Button>
                     </div>
                   ))}
                 </div>
@@ -194,6 +359,34 @@ const ProductGrid = () => {
                         <div className="text-xs text-yellow-600 mt-1">
                           ★★★★☆ ({product.rating})
                         </div>
+                        <Button
+                          size="sm"
+                          className={`w-full mt-3 ${
+                            isInCart(product.id)
+                              ? 'bg-green-600 hover:bg-green-700'
+                              : 'bg-amazon-orange hover:bg-amazon-orange/90'
+                          }`}
+                          onClick={() => addToCart({
+                            id: product.id,
+                            title: product.title,
+                            price: product.price,
+                            originalPrice: product.originalPrice,
+                            image: product.image,
+                            category: product.category
+                          })}
+                        >
+                          {isInCart(product.id) ? (
+                            <>
+                              <ShoppingCart size={14} className="mr-1" />
+                              In Cart
+                            </>
+                          ) : (
+                            <>
+                              <Plus size={14} className="mr-1" />
+                              Add to Cart
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
                   ))}

@@ -1,3 +1,4 @@
+import { Toaster } from 'sonner'
 import Header from './components/Header'
 import Navigation from './components/Navigation'
 import HeroBanner from './components/HeroBanner'
@@ -14,6 +15,7 @@ function App() {
         <ProductGrid />
       </main>
       <Footer />
+      <Toaster position="top-right" />
     </div>
   )
 }
