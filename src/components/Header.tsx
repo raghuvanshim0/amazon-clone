@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { MapPin, MagnifyingGlass, ShoppingCart, CaretDown, List } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useKV } from '@github/spark/hooks'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useCart } from '@/hooks/use-cart'
+import CartDrawer from './CartDrawer'
 
 interface CartItem {
   id: string
